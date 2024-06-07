@@ -1,3 +1,3 @@
 module github.com/itmayziii/last_algo_course
 
-go 1.21
+go 1.22

@@ -45,8 +45,6 @@ func TestLinearSearch(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		tt := tt
-
 		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
 			t.Parallel()
 
