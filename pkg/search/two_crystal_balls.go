@@ -14,26 +14,20 @@ func TwoCrystalBalls(breaks []bool) int {
 	log.Printf("jmpAmount: %d\n", jmpAmount)
 
 	i := jmpAmount
-	didBreak := -1
 	for ; i < len(breaks); i += jmpAmount {
 		if breaks[i] {
 			log.Printf("1st ball breaking on: %d\n", i)
-			didBreak = i
 			break
 		}
 	}
 
 	i -= jmpAmount
-	for j := 0; j < jmpAmount && i < len(breaks); j, i = j+1, i+1 {
+	for j := 0; j <= jmpAmount && i < len(breaks); j, i = j+1, i+1 {
 		log.Printf("manually searching through with i: %d, j: %d\n", i, j)
 		if breaks[i] {
 			log.Printf("2nd ball breaking on: %d\n", i)
 			return i
 		}
-	}
-
-	if didBreak != -1 {
-		return didBreak
 	}
 
 	log.Printf("no ball was broken for arr: %v\n", breaks)
