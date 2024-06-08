@@ -2,7 +2,7 @@ package search_test
 
 import (
 	"fmt"
-	"github.com/itmayziii/last_algo_course/pkg/search"
+	"github.com/itmayziii/fm_last_algo_course/pkg/search"
 	"testing"
 )
 

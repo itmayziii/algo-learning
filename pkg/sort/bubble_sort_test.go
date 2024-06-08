@@ -2,7 +2,7 @@ package sort_test
 
 import (
 	"fmt"
-	"github.com/itmayziii/last_algo_course/pkg/sort"
+	"github.com/itmayziii/fm_last_algo_course/pkg/sort"
 	"testing"
 )
 

@@ -2,7 +2,7 @@ package linked_list_test
 
 import (
 	"fmt"
-	"github.com/itmayziii/last_algo_course/pkg/linked_list"
+	"github.com/itmayziii/fm_last_algo_course/pkg/linked_list"
 	"testing"
 )
 
