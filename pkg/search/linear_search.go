@@ -1,6 +1,6 @@
 package search
 
-// LinearSearch implements linear search - O(n)
+// LinearSearch implements linear search - O(N)
 // Data can be unordered
 // https://frontendmasters.com/courses/algorithms/linear-search-kata-setup/
 func LinearSearch(a []int, x int) bool {
