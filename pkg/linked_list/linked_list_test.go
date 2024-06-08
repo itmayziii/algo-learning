@@ -92,6 +92,36 @@ func TestNode_Search(t *testing.T) {
 			false,
 		},
 		{
+			second,
+			[]byte("A"),
+			false,
+		},
+		{
+			second,
+			[]byte("B"),
+			true,
+		},
+		{
+			second,
+			[]byte("C"),
+			true,
+		},
+		{
+			third,
+			[]byte("A"),
+			false,
+		},
+		{
+			third,
+			[]byte("B"),
+			false,
+		},
+		{
+			third,
+			[]byte("C"),
+			true,
+		},
+		{
 			head,
 			[]byte("AA"),
 			false,
