@@ -3,6 +3,7 @@ package linked_list
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -52,8 +53,29 @@ func (n *Node) Length() int {
 	return count
 }
 
-// Unshift adds a new node as the head of the linked list and returns the new head. O(N)
+// Unshift adds a new node as the head of the linked list and returns the new head. O(1)
 func (n *Node) Unshift(newNode *Node) *Node {
 	newNode.Next = n
 	return newNode
+}
+
+// Push adds a new node as the tail of the linked list and returns the new tail. O(N)
+func (n *Node) Push(newNode *Node) *Node {
+	previous := n
+	current := n
+	for current != nil {
+		previous = current
+		current = current.Next
+	}
+
+	if previous != nil {
+		log.Printf("previous data: %s", previous.Data)
+		previous.Next = newNode
+	}
+
+	return newNode
+}
+
+func (n *Node) String() string {
+	return n.Traverse()
 }
