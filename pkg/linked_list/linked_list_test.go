@@ -7,25 +7,13 @@ import (
 )
 
 func TestNode_Traverse(t *testing.T) {
-	head := &linked_list.Node{
-		Data: []byte("A"),
-	}
-	second := &linked_list.Node{
-		Data: []byte("B"),
-	}
-	third := &linked_list.Node{
-		Data: []byte("C"),
-	}
-	head.Next = second
-	second.Next = third
-
 	tests := []struct {
 		list     *linked_list.Node
 		expected string
 	}{
-		{head, "A -> B -> C"},
-		{second, "B -> C"},
-		{third, "C"},
+		{newLinkedList(), "A -> B -> C"},
+		{newLinkedList().Next, "B -> C"},
+		{newLinkedList().Next.Next, "C"},
 		{nil, ""},
 	}
 
@@ -59,18 +47,18 @@ func TestNode_Search(t *testing.T) {
 		needle   []byte
 		expected bool
 	}{
-		{head, []byte("A"), true},
-		{head, []byte("B"), true},
-		{head, []byte("C"), true},
-		{head, []byte("D"), false},
-		{second, []byte("A"), false},
-		{second, []byte("B"), true},
-		{second, []byte("C"), true},
-		{third, []byte("A"), false},
-		{third, []byte("B"), false},
-		{third, []byte("C"), true},
-		{head, []byte("AA"), false},
-		{head, []byte(""), false},
+		{newLinkedList(), []byte("A"), true},
+		{newLinkedList(), []byte("B"), true},
+		{newLinkedList(), []byte("C"), true},
+		{newLinkedList(), []byte("D"), false},
+		{newLinkedList().Next, []byte("A"), false},
+		{newLinkedList().Next, []byte("B"), true},
+		{newLinkedList().Next, []byte("C"), true},
+		{newLinkedList().Next.Next, []byte("A"), false},
+		{newLinkedList().Next.Next, []byte("B"), false},
+		{newLinkedList().Next.Next, []byte("C"), true},
+		{newLinkedList(), []byte("AA"), false},
+		{newLinkedList(), []byte(""), false},
 		{nil, []byte("A"), false},
 	}
 
@@ -103,9 +91,9 @@ func TestNode_Length(t *testing.T) {
 		list     *linked_list.Node
 		expected int
 	}{
-		{head, 3},
-		{second, 2},
-		{third, 1},
+		{newLinkedList(), 3},
+		{newLinkedList().Next, 2},
+		{newLinkedList().Next.Next, 1},
 		{nil, 0},
 	}
 
@@ -122,51 +110,86 @@ func TestNode_Length(t *testing.T) {
 }
 
 func TestNode_Unshift(t *testing.T) {
-	head := &linked_list.Node{
-		Data: []byte("A"),
-	}
-	second := &linked_list.Node{
-		Data: []byte("B"),
-	}
-	third := &linked_list.Node{
-		Data: []byte("C"),
-	}
-	head.Next = second
-	second.Next = third
-
-	newHead := &linked_list.Node{
-		Data: []byte("0"),
-	}
-
 	tests := []struct {
-		list    *linked_list.Node
-		newHead *linked_list.Node
+		list     *linked_list.Node
+		newHead  *linked_list.Node
+		expected string
 	}{
-		{head, newHead},
-		{second, newHead},
-		{third, newHead},
-		{nil, newHead},
+		{newLinkedList(), &linked_list.Node{Data: []byte("0")}, "0 -> A -> B -> C"},
+		{newLinkedList().Next, &linked_list.Node{Data: []byte("0")}, "0 -> B -> C"},
+		{newLinkedList().Next.Next, &linked_list.Node{Data: []byte("0")}, "0 -> C"},
+		{nil, &linked_list.Node{Data: []byte("0")}, "0"},
 	}
 
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
 			t.Parallel()
 
-			actual := tt.list.Unshift(tt.newHead)
-			if actual != tt.newHead {
-				t.Errorf("returned node: %s is not the expected new node: %s", actual, tt.newHead)
-			}
-			if actual.Next != tt.list {
-				t.Errorf("newly added first node: %s does not refrence the old head as the next node: %s",
-					actual,
-					tt.list,
-				)
+			actual := tt.list.Unshift(tt.newHead).Traverse()
+			if actual != tt.expected {
+				t.Errorf("actual %s, expected %s", actual, tt.expected)
 			}
 		})
 	}
 }
 
 func TestNode_Push(t *testing.T) {
+	tests := []struct {
+		list     *linked_list.Node
+		newTail  *linked_list.Node
+		expected string
+	}{
+		{newLinkedList(), &linked_list.Node{Data: []byte("Z")}, "A -> B -> C -> Z"},
+		{newLinkedList().Next, &linked_list.Node{Data: []byte("Z")}, "B -> C -> Z"},
+		{newLinkedList().Next.Next, &linked_list.Node{Data: []byte("Z")}, "C -> Z"},
+		{nil, &linked_list.Node{Data: []byte("Z")}, "Z"},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
+			t.Parallel()
+
+			actual := tt.list.Push(tt.newTail).Traverse()
+			if actual != tt.expected {
+				t.Errorf("actual %s, expected %s", actual, tt.expected)
+			}
+		})
+	}
+}
+
+func TestNode_Insert(t *testing.T) {
+	tests := []struct {
+		list     *linked_list.Node
+		data     []byte
+		position int
+		expected string
+	}{
+		//{newLinkedList(), []byte("AA"), 0, "AA -> A -> B -> C"},
+		//{newLinkedList(), []byte("BB"), 1, "A -> BB -> B -> C"},
+		//{newLinkedList(), []byte("CC"), 2, "A -> B -> CC -> C"},
+		{newLinkedList(), []byte("D"), 3, "A -> B -> C -> D"},
+		//{newLinkedList(), []byte("E"), 4, "A -> B -> C"},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
+			t.Parallel()
+
+			head, err := tt.list.Insert(tt.data, tt.position)
+			if err != nil {
+				t.Errorf("unexpected error %v", err)
+			}
+			actual := head.Traverse()
+			if actual != tt.expected {
+				t.Errorf("actual: %s, expected %s", actual, tt.expected)
+			}
+		})
+	}
+}
+
+// newLinkedList returns a new linked list as some of the linked list methods are mutating and we don't want
+// to have shared state between test cases.
+func newLinkedList() *linked_list.Node {
 	head := &linked_list.Node{
 		Data: []byte("A"),
 	}
@@ -179,41 +202,5 @@ func TestNode_Push(t *testing.T) {
 	head.Next = second
 	second.Next = third
 
-	newTail := &linked_list.Node{
-		Data: []byte("Z"),
-	}
-
-	tests := []struct {
-		list    *linked_list.Node
-		newTail *linked_list.Node
-	}{
-		{head, newTail},
-		{second, newTail},
-		{third, newTail},
-		{nil, newTail},
-	}
-
-	for i, tt := range tests {
-		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
-			t.Parallel()
-
-			actual := tt.list.Push(tt.newTail)
-			if actual != tt.newTail {
-				t.Errorf("returned node: %s, is not the expected new node: %s", actual, tt.newTail)
-			}
-			if actual.Next != nil {
-				t.Errorf("new tail node: %s, is not suppose to have any nodes following it", tt.newTail)
-			}
-
-			previous := tt.list
-			current := tt.list
-			for current != nil {
-				previous = current
-				current = current.Next
-			}
-			if previous != nil && previous != actual {
-				t.Errorf("last node in list: %s, is not the expected new tail node:", current)
-			}
-		})
-	}
+	return head
 }

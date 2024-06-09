@@ -3,7 +3,6 @@ package linked_list
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -54,13 +53,19 @@ func (n *Node) Length() int {
 }
 
 // Unshift adds a new node as the head of the linked list and returns the new head. O(1)
+// Returns the head node.
 func (n *Node) Unshift(newNode *Node) *Node {
 	newNode.Next = n
 	return newNode
 }
 
-// Push adds a new node as the tail of the linked list and returns the new tail. O(N)
+// Push adds a new node as the tail of the linked list. O(N)
+// Returns the head node.
 func (n *Node) Push(newNode *Node) *Node {
+	if n == nil {
+		return newNode
+	}
+
 	previous := n
 	current := n
 	for current != nil {
@@ -68,14 +73,46 @@ func (n *Node) Push(newNode *Node) *Node {
 		current = current.Next
 	}
 
-	if previous != nil {
-		log.Printf("previous data: %s", previous.Data)
-		previous.Next = newNode
-	}
+	previous.Next = newNode
 
-	return newNode
+	return n
 }
 
+// Insert inserts a new node at a given position. O(N)
+// Return the head node.
+func (n *Node) Insert(data []byte, position int) (*Node, error) {
+	if position < 0 {
+		return nil, fmt.Errorf("invalid position: %d", position)
+	}
+
+	newNode := &Node{Data: data}
+	if position == 0 || n == nil {
+		head := n.Unshift(newNode)
+		return head, nil
+	}
+
+	previous := n
+	current := n
+	for i := 0; i <= position; i++ {
+		if i != position {
+			if current == nil {
+				return nil, fmt.Errorf("position: %d is not in range of linked list", i)
+			}
+
+			previous = current
+			current = current.Next
+			continue
+		}
+
+		newNode.Next = current
+		previous.Next = newNode
+		break
+	}
+
+	return n, nil
+}
+
+// String implements the Stringer interface
 func (n *Node) String() string {
 	return n.Traverse()
 }
