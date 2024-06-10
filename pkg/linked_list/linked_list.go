@@ -6,6 +6,14 @@ import (
 	"strings"
 )
 
+type OutOfRangeError struct {
+	position int
+}
+
+func (e OutOfRangeError) Error() string {
+	return fmt.Sprintf("position: %d is not in range of linked list", e.position)
+}
+
 type Node struct {
 	Next *Node
 	Data []byte
@@ -69,6 +77,25 @@ func (n *Node) Unshift(newNode *Node) *Node {
 	return newNode
 }
 
+// Push adds a new node as the tail of the linked list. O(N)
+// Returns the head node.
+func (n *Node) Push(newNode *Node) *Node {
+	if n == nil {
+		return newNode
+	}
+
+	previous := n
+	current := n
+	for current != nil {
+		previous = current
+		current = current.Next
+	}
+
+	previous.Next = newNode
+
+	return n
+}
+
 // Pop removes the tail of a linked list. O(N)
 // Returns the head node.
 func (n *Node) Pop() *Node {
@@ -91,36 +118,16 @@ func (n *Node) Pop() *Node {
 	return n
 }
 
-// Push adds a new node as the tail of the linked list. O(N)
-// Returns the head node.
-func (n *Node) Push(newNode *Node) *Node {
-	if n == nil {
-		return newNode
-	}
-
-	previous := n
-	current := n
-	for current != nil {
-		previous = current
-		current = current.Next
-	}
-
-	previous.Next = newNode
-
-	return n
-}
-
 // Insert inserts a new node at a given position. O(N)
 // Return the head node.
 func (n *Node) Insert(data []byte, position int) (*Node, error) {
 	if position < 0 {
-		return nil, fmt.Errorf("invalid position: %d", position)
+		return nil, OutOfRangeError{position}
 	}
 
 	newNode := &Node{Data: data}
 	if position == 0 || n == nil {
-		head := n.Unshift(newNode)
-		return head, nil
+		return n.Unshift(newNode), nil
 	}
 
 	previous := n
@@ -128,7 +135,7 @@ func (n *Node) Insert(data []byte, position int) (*Node, error) {
 	for i := 0; i <= position; i++ {
 		if i != position {
 			if current == nil {
-				return nil, fmt.Errorf("position: %d is not in range of linked list", position)
+				return nil, OutOfRangeError{position}
 			}
 
 			previous = current
@@ -141,6 +148,37 @@ func (n *Node) Insert(data []byte, position int) (*Node, error) {
 		break
 	}
 
+	return n, nil
+}
+
+// Delete deletes a node at a given position. O(N)
+// Returns the head node
+func (n *Node) Delete(position int) (*Node, error) {
+	if position < 0 {
+		return nil, OutOfRangeError{position}
+	}
+
+	if position == 0 || n == nil {
+		return n.Shift(), nil
+	}
+
+	previous := n
+	current := n
+	for i := 0; i <= position; i++ {
+		if i != position {
+			if current == nil {
+				return nil, OutOfRangeError{position}
+			}
+
+			previous = current
+			current = current.Next
+			continue
+		}
+
+		previous.Next = current.Next
+		break
+	}
+	
 	return n, nil
 }
 

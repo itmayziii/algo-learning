@@ -157,29 +157,6 @@ func TestNode_Unshift(t *testing.T) {
 	}
 }
 
-func TestNode_Pop(t *testing.T) {
-	tests := []struct {
-		list     *linked_list.Node
-		expected string
-	}{
-		{newLinkedList(), "A -> B"},
-		{newLinkedList().Next, "B"},
-		{newLinkedList().Next.Next, ""},
-		{nil, ""},
-	}
-
-	for i, tt := range tests {
-		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
-			t.Parallel()
-
-			actual := tt.list.Pop().Traverse()
-			if actual != tt.expected {
-				t.Errorf("actual %s, expected %s", actual, tt.expected)
-			}
-		})
-	}
-}
-
 func TestNode_Push(t *testing.T) {
 	tests := []struct {
 		list     *linked_list.Node
@@ -197,6 +174,29 @@ func TestNode_Push(t *testing.T) {
 			t.Parallel()
 
 			actual := tt.list.Push(tt.newTail).Traverse()
+			if actual != tt.expected {
+				t.Errorf("actual %s, expected %s", actual, tt.expected)
+			}
+		})
+	}
+}
+
+func TestNode_Pop(t *testing.T) {
+	tests := []struct {
+		list     *linked_list.Node
+		expected string
+	}{
+		{newLinkedList(), "A -> B"},
+		{newLinkedList().Next, "B"},
+		{newLinkedList().Next.Next, ""},
+		{nil, ""},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
+			t.Parallel()
+
+			actual := tt.list.Pop().Traverse()
 			if actual != tt.expected {
 				t.Errorf("actual %s, expected %s", actual, tt.expected)
 			}
@@ -222,7 +222,7 @@ func TestNode_Insert(t *testing.T) {
 		{newLinkedList(), []byte("D"), 3, expected{"A -> B -> C -> D", nil}},
 		{newLinkedList(), []byte("E"), 4, expected{
 			"A -> B -> C",
-			errors.New("position: 4 is not in range of linked list"),
+			linked_list.OutOfRangeError{},
 		}},
 	}
 
@@ -241,7 +241,48 @@ func TestNode_Insert(t *testing.T) {
 					t.Errorf("actual: %s, expected %s", actual, tt.expected.value)
 				}
 			} else {
-				if err != nil && tt.expected.err.Error() != err.Error() {
+				if err != nil && errors.Is(err, tt.expected.err) {
+					t.Errorf("actual error: %v, expected error: %v", err, tt.expected.err)
+				}
+			}
+		})
+	}
+}
+
+func TestNode_Delete(t *testing.T) {
+	type expected struct {
+		value string
+		err   error
+	}
+
+	tests := []struct {
+		list     *linked_list.Node
+		position int
+		expected expected
+	}{
+		//{newLinkedList(), 0, expected{"B -> C", nil}},
+		{newLinkedList(), 1, expected{"A -> C", nil}},
+		//{newLinkedList(), 2, expected{"A -> B", nil}},
+		//{newLinkedList(), 3, expected{"", linked_list.OutOfRangeError{}}},
+		//{newLinkedList(), 4, expected{"", linked_list.OutOfRangeError{}}},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
+			t.Parallel()
+
+			head, err := tt.list.Delete(tt.position)
+			if tt.expected.err == nil {
+				if err != nil {
+					t.Errorf("unexpected error %v", err)
+				}
+
+				actual := head.Traverse()
+				if actual != tt.expected.value {
+					t.Errorf("actual: %s, expected %s", actual, tt.expected.value)
+				}
+			} else {
+				if err != nil && errors.Is(err, tt.expected.err) {
 					t.Errorf("actual error: %v, expected error: %v", err, tt.expected.err)
 				}
 			}
