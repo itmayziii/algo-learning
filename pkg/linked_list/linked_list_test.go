@@ -1,6 +1,7 @@
 package linked_list_test
 
 import (
+	"errors"
 	"fmt"
 	"github.com/itmayziii/fm_last_algo_course/pkg/linked_list"
 	"testing"
@@ -109,6 +110,29 @@ func TestNode_Length(t *testing.T) {
 	}
 }
 
+func TestNode_Shift(t *testing.T) {
+	tests := []struct {
+		list     *linked_list.Node
+		expected string
+	}{
+		{newLinkedList(), "B -> C"},
+		{newLinkedList().Next, "C"},
+		{newLinkedList().Next.Next, ""},
+		{nil, ""},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
+			t.Parallel()
+
+			actual := tt.list.Shift().Traverse()
+			if actual != tt.expected {
+				t.Errorf("actual: %s, expected %s", actual, tt.expected)
+			}
+		})
+	}
+}
+
 func TestNode_Unshift(t *testing.T) {
 	tests := []struct {
 		list     *linked_list.Node
@@ -158,17 +182,25 @@ func TestNode_Push(t *testing.T) {
 }
 
 func TestNode_Insert(t *testing.T) {
+	type expected struct {
+		value string
+		err   error
+	}
+
 	tests := []struct {
 		list     *linked_list.Node
 		data     []byte
 		position int
-		expected string
+		expected expected
 	}{
-		//{newLinkedList(), []byte("AA"), 0, "AA -> A -> B -> C"},
-		//{newLinkedList(), []byte("BB"), 1, "A -> BB -> B -> C"},
-		//{newLinkedList(), []byte("CC"), 2, "A -> B -> CC -> C"},
-		{newLinkedList(), []byte("D"), 3, "A -> B -> C -> D"},
-		//{newLinkedList(), []byte("E"), 4, "A -> B -> C"},
+		//{newLinkedList(), []byte("AA"), 0, expected{"AA -> A -> B -> C", nil}},
+		//{newLinkedList(), []byte("BB"), 1, expected{"A -> BB -> B -> C", nil}},
+		//{newLinkedList(), []byte("CC"), 2, expected{"A -> B -> CC -> C", nil}},
+		//{newLinkedList(), []byte("D"), 3, expected{"A -> B -> C -> D", nil}},
+		{newLinkedList(), []byte("E"), 4, expected{
+			"A -> B -> C",
+			errors.New("position: 4 is not in range of linked list"),
+		}},
 	}
 
 	for i, tt := range tests {
@@ -176,12 +208,19 @@ func TestNode_Insert(t *testing.T) {
 			t.Parallel()
 
 			head, err := tt.list.Insert(tt.data, tt.position)
-			if err != nil {
-				t.Errorf("unexpected error %v", err)
-			}
-			actual := head.Traverse()
-			if actual != tt.expected {
-				t.Errorf("actual: %s, expected %s", actual, tt.expected)
+			if tt.expected.err == nil {
+				if err != nil {
+					t.Errorf("unexpected error %v", err)
+				}
+
+				actual := head.Traverse()
+				if actual != tt.expected.value {
+					t.Errorf("actual: %s, expected %s", actual, tt.expected.value)
+				}
+			} else {
+				if err != nil && tt.expected.err.Error() != err.Error() {
+					t.Errorf("actual error: %v, expected error: %v", err, tt.expected.err)
+				}
 			}
 		})
 	}

@@ -52,6 +52,16 @@ func (n *Node) Length() int {
 	return count
 }
 
+// Shift removes the head of a linked list. O(1)
+// Returns the head node.
+func (n *Node) Shift() *Node {
+	if n == nil {
+		return nil
+	}
+
+	return n.Next
+}
+
 // Unshift adds a new node as the head of the linked list and returns the new head. O(1)
 // Returns the head node.
 func (n *Node) Unshift(newNode *Node) *Node {
@@ -96,7 +106,7 @@ func (n *Node) Insert(data []byte, position int) (*Node, error) {
 	for i := 0; i <= position; i++ {
 		if i != position {
 			if current == nil {
-				return nil, fmt.Errorf("position: %d is not in range of linked list", i)
+				return nil, fmt.Errorf("position: %d is not in range of linked list", position)
 			}
 
 			previous = current
