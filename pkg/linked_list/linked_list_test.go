@@ -193,10 +193,10 @@ func TestNode_Insert(t *testing.T) {
 		position int
 		expected expected
 	}{
-		//{newLinkedList(), []byte("AA"), 0, expected{"AA -> A -> B -> C", nil}},
-		//{newLinkedList(), []byte("BB"), 1, expected{"A -> BB -> B -> C", nil}},
-		//{newLinkedList(), []byte("CC"), 2, expected{"A -> B -> CC -> C", nil}},
-		//{newLinkedList(), []byte("D"), 3, expected{"A -> B -> C -> D", nil}},
+		{newLinkedList(), []byte("AA"), 0, expected{"AA -> A -> B -> C", nil}},
+		{newLinkedList(), []byte("BB"), 1, expected{"A -> BB -> B -> C", nil}},
+		{newLinkedList(), []byte("CC"), 2, expected{"A -> B -> CC -> C", nil}},
+		{newLinkedList(), []byte("D"), 3, expected{"A -> B -> C -> D", nil}},
 		{newLinkedList(), []byte("E"), 4, expected{
 			"A -> B -> C",
 			errors.New("position: 4 is not in range of linked list"),
