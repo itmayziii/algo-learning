@@ -157,6 +157,29 @@ func TestNode_Unshift(t *testing.T) {
 	}
 }
 
+func TestNode_Pop(t *testing.T) {
+	tests := []struct {
+		list     *linked_list.Node
+		expected string
+	}{
+		{newLinkedList(), "A -> B"},
+		{newLinkedList().Next, "B"},
+		{newLinkedList().Next.Next, ""},
+		{nil, ""},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
+			t.Parallel()
+
+			actual := tt.list.Pop().Traverse()
+			if actual != tt.expected {
+				t.Errorf("actual %s, expected %s", actual, tt.expected)
+			}
+		})
+	}
+}
+
 func TestNode_Push(t *testing.T) {
 	tests := []struct {
 		list     *linked_list.Node

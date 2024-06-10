@@ -69,6 +69,28 @@ func (n *Node) Unshift(newNode *Node) *Node {
 	return newNode
 }
 
+// Pop removes the tail of a linked list. O(N)
+// Returns the head node.
+func (n *Node) Pop() *Node {
+	if n == nil || n.Next == nil {
+		return nil
+	}
+
+	previous := n
+	current := n
+	for current != nil {
+		if current.Next == nil {
+			previous.Next = nil
+			return n
+		}
+
+		previous = current
+		current = current.Next
+	}
+
+	return n
+}
+
 // Push adds a new node as the tail of the linked list. O(N)
 // Returns the head node.
 func (n *Node) Push(newNode *Node) *Node {
