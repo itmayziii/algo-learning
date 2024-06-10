@@ -226,7 +226,7 @@ func TestNode_Insert(t *testing.T) {
 	}
 }
 
-// newLinkedList returns a new linked list as some of the linked list methods are mutating and we don't want
+// newLinkedList returns a new linked list as some of the linked list methods are mutating, and we don't want
 // to have shared state between test cases.
 func newLinkedList() *linked_list.Node {
 	head := &linked_list.Node{
