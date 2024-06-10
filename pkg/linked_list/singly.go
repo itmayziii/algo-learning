@@ -35,6 +35,27 @@ func (ll *Singly) Traverse() string {
 	return traversalStr.String()
 }
 
+// Search returns whether a given value is in the linked list. O(N)
+func (ll *Singly) Search(needle string) bool {
+	current := ll.head
+	for current != nil {
+		if current.value == needle {
+			return true
+		}
+		current = current.next
+	}
+
+	return false
+}
+
+// Length returns how many nodes are in the linked list.
+//
+// O(1) - would be O(N) if we did not maintain the length internally and would instead have to walk the N sized
+// list to count the values.
+func (ll *Singly) Length() int {
+	return ll.length
+}
+
 // Unshift adds a new node as the head of the linked list.
 //
 // O(1)
@@ -158,70 +179,42 @@ func (ll *Singly) Insert(value string, position int) int {
 	return -1
 }
 
+// Delete deletes a node and returns the position of the deleted node or -1 if no deletion occurred.
 //
-//// Search returns whether a given value is in the linked list. O(N)
-//func (n *Node) Search(needle []byte) bool {
-//	current := n
-//	for current != nil {
-//		if bytes.Equal(current.Data, needle) {
-//			return true
-//		}
-//		current = current.Next
-//	}
-//
-//	return false
-//}
-//
+// O(N)
+func (ll *Singly) Delete(position int) int {
+	if position < 0 || ll.length == 0 {
+		return -1
+	}
 
-// Length returns how many nodes are in the linked list.
-//
-// O(1) - would be O(N) if we did not maintain the length internally and would instead have to walk the N sized
-// list to count the values.
-func (ll *Singly) Length() int {
-	return ll.length
+	if position == 0 {
+		ll.Shift()
+		return 0
+	}
+
+	previous := ll.head
+	current := ll.head
+	for i := 0; i <= position && current != nil; i++ {
+		if i != position {
+			previous = current
+			current = current.next
+			continue
+		}
+
+		previous.next = current.next
+		ll.length--
+		return i
+	}
+
+	return -1
 }
 
-//
-//// Delete deletes a singlyNode at a given position. O(N)
-//// Returns the head singlyNode
-//func (n *Node) Delete(position int) (*Node, error) {
-//	if position < 0 {
-//		return nil, OutOfRangeError{position}
-//	}
-//
-//	if position == 0 || n == nil {
-//		return n.Shift(), nil
-//	}
-//
-//	previous := n
-//	current := n
-//	for i := 0; i <= position; i++ {
-//		if i != position {
-//			if current == nil {
-//				return nil, OutOfRangeError{position}
-//			}
-//
-//			previous = current
-//			current = current.Next
-//			continue
-//		}
-//
-//		previous.Next = current.Next
-//		break
-//	}
-//
-//	return n, nil
-//}
-//
-//// String implements the Stringer interface
-//func (n *singlyNode) String() string {
-//	return string(n.value)
-//}
-//
-//type OutOfRangeError struct {
-//	position int
-//}
-//
-//func (e OutOfRangeError) Error() string {
-//	return fmt.Sprintf("position: %d is not in range of linked list", e.position)
-//}
+// String implements the Stringer interface
+func (ll *Singly) String() string {
+	return ll.Traverse()
+}
+
+// String implements the Stringer interface
+func (n *singlyNode) String() string {
+	return n.value
+}
