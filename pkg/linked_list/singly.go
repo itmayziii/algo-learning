@@ -61,13 +61,6 @@ func (ll *Singly) Length() int {
 // O(1)
 func (ll *Singly) Unshift(value string) {
 	newNode := &singlyNode{value: value, next: ll.head}
-	if ll.head == nil || ll.tail == nil {
-		ll.head = newNode
-		ll.tail = newNode
-		ll.length = 1
-		return
-	}
-
 	ll.head = newNode
 	ll.length++
 	if ll.head.next == nil {
@@ -87,14 +80,7 @@ func (ll *Singly) Shift() string {
 	ll.head = oldHead.next
 	ll.length--
 
-	if ll.head == nil || ll.tail == nil {
-		ll.head = nil
-		ll.tail = nil
-		ll.length = 0
-		return oldHead.value
-	}
-
-	if ll.head.next == nil {
+	if ll.head != nil && ll.head.next == nil {
 		ll.tail = ll.head
 	}
 
@@ -107,16 +93,16 @@ func (ll *Singly) Shift() string {
 // through the N sized list to find the tail.
 func (ll *Singly) Push(value string) {
 	newNode := &singlyNode{value: value}
-	if ll.head == nil || ll.tail == nil {
-		ll.head = newNode
-		ll.tail = newNode
-		ll.length = 1
-		return
-	}
 
-	ll.tail.next = newNode
+	if ll.tail != nil {
+		ll.tail.next = newNode
+	}
 	ll.tail = newNode
 	ll.length++
+
+	if ll.head == nil {
+		ll.head = newNode
+	}
 }
 
 // Pop removes the tail of a linked list and returns its value.
