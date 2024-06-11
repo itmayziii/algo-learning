@@ -7,8 +7,8 @@ type Queue struct {
 	list *linked_list.Singly
 }
 
-func NewQueue() *Queue {
-	return &Queue{list: &linked_list.Singly{}}
+func NewQueue(list *linked_list.Singly) *Queue {
+	return &Queue{list: list}
 }
 
 // Enqueue adds item to the queue at the end of the list.
@@ -24,4 +24,8 @@ func (q *Queue) Deque() string {
 // Peek shows the next value in the queue without removing it from the list.
 func (q *Queue) Peek() string {
 	return q.list.First()
+}
+
+func (q *Queue) String() string {
+	return q.list.String()
 }
