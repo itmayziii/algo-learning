@@ -70,8 +70,9 @@ func (ll *Singly) Unshift(value string) {
 
 	ll.head = newNode
 	ll.length++
-
-	return
+	if ll.head.next == nil {
+		ll.tail = ll.head
+	}
 }
 
 // Shift removes the head of a linked list and returns the value of the removed node.
@@ -82,10 +83,22 @@ func (ll *Singly) Shift() string {
 		return ""
 	}
 
-	value := ll.head.value
-	ll.head = ll.head.next
+	oldHead := ll.head
+	ll.head = oldHead.next
 	ll.length--
-	return value
+
+	if ll.head == nil || ll.tail == nil {
+		ll.head = nil
+		ll.tail = nil
+		ll.length = 0
+		return oldHead.value
+	}
+
+	if ll.head.next == nil {
+		ll.tail = ll.head
+	}
+
+	return oldHead.value
 }
 
 // Push adds a new node as the tail of the linked list.
@@ -104,7 +117,6 @@ func (ll *Singly) Push(value string) {
 	ll.tail.next = newNode
 	ll.tail = newNode
 	ll.length++
-	return
 }
 
 // Pop removes the tail of a linked list and returns its value.
@@ -129,6 +141,7 @@ func (ll *Singly) Pop() string {
 	for current != nil {
 		if current.next == nil {
 			previous.next = nil
+			ll.tail = previous
 			ll.length--
 			return current.value
 		}
@@ -171,6 +184,9 @@ func (ll *Singly) Insert(value string, position int) int {
 		}
 
 		newNode := &singlyNode{value: value, next: current}
+		if current == nil {
+			ll.tail = newNode
+		}
 		previous.next = newNode
 		ll.length++
 		return i
@@ -203,10 +219,35 @@ func (ll *Singly) Delete(position int) int {
 
 		previous.next = current.next
 		ll.length--
+		if previous.next == nil {
+			ll.tail = previous
+		}
 		return i
 	}
 
 	return -1
+}
+
+// First returns the value of the first node in the list.
+//
+// O(1)
+func (ll *Singly) First() string {
+	if ll.head == nil {
+		return ""
+	}
+
+	return ll.head.value
+}
+
+// Last returns the value of the last node in the list.
+//
+// O(1)
+func (ll *Singly) Last() string {
+	if ll.tail == nil {
+		return ""
+	}
+
+	return ll.tail.value
 }
 
 // String implements the Stringer interface

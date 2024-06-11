@@ -329,6 +329,145 @@ func TestSingly_Delete(t *testing.T) {
 	}
 }
 
+// I don't generally believe in tests like this but there is enough internal state being kept by the singly
+// linked list that it is important to test the result of operations after other operations have occurred.
+func TestLinkedList_Integration(t *testing.T) {
+	t.Parallel()
+
+	type expected struct {
+		traversal string
+		length    int
+		first     string
+		last      string
+	}
+
+	type change struct {
+		operation func(ll *linked_list.Singly)
+		expected  expected
+	}
+
+	test := struct {
+		list    *linked_list.Singly
+		changes []change
+	}{
+		newLinkedList("A", "B", "C"),
+		[]change{
+			{
+				operation: nil,
+				expected: expected{
+					traversal: "A -> B -> C",
+					length:    3,
+					first:     "A",
+					last:      "C",
+				},
+			},
+			{
+				operation: func(ll *linked_list.Singly) {
+					ll.Shift()
+				},
+				expected: expected{
+					traversal: "B -> C",
+					length:    2,
+					first:     "B",
+					last:      "C",
+				},
+			},
+			{
+				operation: func(ll *linked_list.Singly) {
+					ll.Pop()
+				},
+				expected: expected{
+					traversal: "B",
+					length:    1,
+					first:     "B",
+					last:      "B",
+				},
+			},
+			{
+				operation: func(ll *linked_list.Singly) {
+					ll.Unshift("Z")
+				},
+				expected: expected{
+					traversal: "Z -> B",
+					length:    2,
+					first:     "Z",
+					last:      "B",
+				},
+			},
+			{
+				operation: func(ll *linked_list.Singly) {
+					ll.Delete(4)
+				},
+				expected: expected{
+					traversal: "Z -> B",
+					length:    2,
+					first:     "Z",
+					last:      "B",
+				},
+			},
+			{
+				operation: func(ll *linked_list.Singly) {
+					ll.Delete(1)
+				},
+				expected: expected{
+					traversal: "Z",
+					length:    1,
+					first:     "Z",
+					last:      "Z",
+				},
+			},
+			{
+				operation: func(ll *linked_list.Singly) {
+					ll.Pop()
+				},
+				expected: expected{
+					traversal: "",
+					length:    0,
+					first:     "",
+					last:      "",
+				},
+			},
+			{
+				operation: func(ll *linked_list.Singly) {
+					ll.Insert("X", 0)
+				},
+				expected: expected{
+					traversal: "X",
+					length:    1,
+					first:     "X",
+					last:      "X",
+				},
+			},
+		},
+	}
+
+	for _, c := range test.changes {
+		if c.operation != nil {
+			c.operation(test.list)
+		}
+
+		actualTraversal := test.list.Traverse()
+		if actualTraversal != c.expected.traversal {
+			t.Errorf("actual traveral: %s, expected traversal: %s", actualTraversal, c.expected.traversal)
+		}
+
+		actualLength := test.list.Length()
+		if actualLength != c.expected.length {
+			t.Errorf("actual length: %d, expected length: %d", actualLength, c.expected.length)
+		}
+
+		actualFirst := test.list.First()
+		if actualFirst != c.expected.first {
+			t.Errorf("actual first: %s, expected first: %s", actualFirst, c.expected.first)
+		}
+
+		actualLast := test.list.Last()
+		if actualLast != c.expected.last {
+			t.Errorf("actual last: %s, expected last: %s", actualLast, c.expected.last)
+		}
+	}
+}
+
 // newLinkedList returns a new linked list as some of the linked list methods are mutating, and we don't want
 // to have shared state between test cases.
 func newLinkedList(values ...string) *linked_list.Singly {
