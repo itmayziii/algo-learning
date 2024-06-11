@@ -10,8 +10,8 @@ type Stack struct {
 	list *linked_list.Singly
 }
 
-func NewStack() *Stack {
-	return &Stack{list: &linked_list.Singly{}}
+func NewStack(list *linked_list.Singly) *Stack {
+	return &Stack{list: list}
 }
 
 func (s *Stack) Push(value string) {
@@ -24,4 +24,8 @@ func (s *Stack) Pop() string {
 
 func (s *Stack) Peek() string {
 	return s.list.First()
+}
+
+func (s *Stack) String() string {
+	return s.list.String()
 }

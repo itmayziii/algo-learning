@@ -1,36 +1,36 @@
-package queue_test
+package stack_test
 
 import (
 	"fmt"
 	"github.com/itmayziii/fm_last_algo_course/pkg/linked_list"
-	"github.com/itmayziii/fm_last_algo_course/pkg/queue"
+	"github.com/itmayziii/fm_last_algo_course/pkg/stack"
 	"testing"
 )
 
-func TestQueue_Enqueue(t *testing.T) {
+func TestQueue_Push(t *testing.T) {
 	type change struct {
-		enqueue  string
+		push     string
 		expected string
 	}
 
 	tests := []struct {
-		queue   *queue.Queue
+		stack   *stack.Stack
 		changes []change
 	}{
 		{
-			queue.NewQueue(newLinkedList("A", "B", "C")),
+			stack.NewStack(newLinkedList("A", "B", "C")),
 			[]change{
-				{enqueue: "D", expected: "A -> B -> C -> D"},
-				{enqueue: "E", expected: "A -> B -> C -> D -> E"},
-				{enqueue: "Z", expected: "A -> B -> C -> D -> E -> Z"},
+				{push: "D", expected: "D -> A -> B -> C"},
+				{push: "E", expected: "E -> D -> A -> B -> C"},
+				{push: "Z", expected: "Z -> E -> D -> A -> B -> C"},
 			},
 		},
 		{
-			queue.NewQueue(newLinkedList()),
+			stack.NewStack(newLinkedList()),
 			[]change{
-				{enqueue: "X", expected: "X"},
-				{enqueue: "Y", expected: "X -> Y"},
-				{enqueue: "Z", expected: "X -> Y -> Z"},
+				{push: "X", expected: "X"},
+				{push: "Y", expected: "Y -> X"},
+				{push: "Z", expected: "Z -> Y -> X"},
 			},
 		},
 	}
@@ -40,8 +40,8 @@ func TestQueue_Enqueue(t *testing.T) {
 			t.Parallel()
 
 			for _, c := range tt.changes {
-				tt.queue.Enqueue(c.enqueue)
-				actual := tt.queue.String()
+				tt.stack.Push(c.push)
+				actual := tt.stack.String()
 				if actual != c.expected {
 					t.Errorf("actual: %s, expected %s", actual, c.expected)
 				}
@@ -50,7 +50,7 @@ func TestQueue_Enqueue(t *testing.T) {
 	}
 }
 
-func TestQueue_Deque(t *testing.T) {
+func TestQueue_Pop(t *testing.T) {
 	type expected struct {
 		value     string
 		traversal string
@@ -61,11 +61,11 @@ func TestQueue_Deque(t *testing.T) {
 	}
 
 	tests := []struct {
-		queue   *queue.Queue
+		stack   *stack.Stack
 		changes []change
 	}{
 		{
-			queue.NewQueue(newLinkedList("A", "B", "C", "X", "Y", "Z")),
+			stack.NewStack(newLinkedList("A", "B", "C", "X", "Y", "Z")),
 			[]change{
 				{expected{"A", "B -> C -> X -> Y -> Z"}},
 				{expected{"B", "C -> X -> Y -> Z"}},
@@ -77,7 +77,7 @@ func TestQueue_Deque(t *testing.T) {
 			},
 		},
 		{
-			queue.NewQueue(newLinkedList()),
+			stack.NewStack(newLinkedList()),
 			[]change{
 				{expected{"", ""}},
 				{expected{"", ""}},
@@ -90,11 +90,11 @@ func TestQueue_Deque(t *testing.T) {
 			t.Parallel()
 
 			for _, c := range tt.changes {
-				actual := tt.queue.Deque()
+				actual := tt.stack.Pop()
 				if actual != c.expected.value {
 					t.Errorf("actual: %s, expected %s", actual, c.expected.value)
 				}
-				actualTraversal := tt.queue.String()
+				actualTraversal := tt.stack.String()
 				if actualTraversal != c.expected.traversal {
 					t.Errorf("actual traversal: %s, expected traversal %s", actualTraversal, c.expected.traversal)
 				}
