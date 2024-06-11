@@ -194,6 +194,7 @@ func TestSingly_Pop(t *testing.T) {
 		{newLinkedList("B", "C"), expected{"C", "B", 1}},
 		{newLinkedList("C"), expected{"C", "", 0}},
 		{newLinkedList("A", "B"), expected{"B", "A", 1}},
+		{newLinkedList(""), expected{"", "", 0}},
 	}
 
 	for i, tt := range tests {
