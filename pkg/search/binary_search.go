@@ -9,7 +9,6 @@ func BinarySearch(a []int, x int) bool {
 
 	for low < high {
 		m := (low + high) / 2
-		// 2 + (4-2) = 4
 		mv := a[m]
 		if x == mv {
 			return true
