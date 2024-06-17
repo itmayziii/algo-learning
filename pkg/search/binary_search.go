@@ -1,9 +1,5 @@
 package search
 
-import (
-	"math"
-)
-
 // BinarySearch implements binary search - O(log n).
 // Data must be ordered in order for this search to work.
 // https://frontendmasters.com/courses/algorithms/binary-search-algorithm/
@@ -12,8 +8,8 @@ func BinarySearch(a []int, x int) bool {
 	high := len(a)
 
 	for low < high {
-		m := int(math.Floor(float64(low) + float64(high-low)/2))
-
+		m := (low + high) / 2
+		// 2 + (4-2) = 4
 		mv := a[m]
 		if x == mv {
 			return true
