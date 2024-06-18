@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestBubbleSort(t *testing.T) {
+func TestQuickSort(t *testing.T) {
 	tests := []struct {
 		arr      []int
 		expected []int
@@ -37,7 +37,7 @@ func TestBubbleSort(t *testing.T) {
 		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
 			t.Parallel()
 
-			actual := sort.BubbleSort(tt.arr)
+			actual := sort.QuickSort(tt.arr)
 			if len(actual) != len(tt.expected) {
 				t.Errorf("actual %v, expected %v", actual, tt.expected)
 				return
